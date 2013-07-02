@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.transform;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -35,11 +36,7 @@ import org.jclouds.azureblob.blobstore.functions.BlobToAzureBlob;
 import org.jclouds.azureblob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azureblob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azureblob.blobstore.functions.ListOptionsToListBlobsOptions;
-import org.jclouds.azureblob.domain.AzureBlob;
-import org.jclouds.azureblob.domain.BlobProperties;
-import org.jclouds.azureblob.domain.ContainerProperties;
-import org.jclouds.azureblob.domain.ListBlobsResponse;
-import org.jclouds.azureblob.domain.PublicAccess;
+import org.jclouds.azureblob.domain.*;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -62,6 +59,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import org.jclouds.io.Payload;
 
 /**
  * @author Adrian Cole
@@ -219,6 +217,37 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Boolean> blobExists(String container, String name) {
       return async.blobExists(container, name);
    }
+
+    /**
+     * This implementation invokes {@link AzureBlobAsyncClient#putBlock(String, String, String, Payload)}
+     * @param container
+     * @param name
+     * @param blockId
+     * @param object
+     */
+    public ListenableFuture<Void> putBlock(String container, String name, String blockId, Payload object) {
+        return async.putBlock(container, name, blockId, object);
+    }
+
+
+    /**
+     * This implementation invokes {@link AzureBlobAsyncClient#putBlockList(String, String, java.util.List)}
+     * @param container
+     * @param name
+     * @param blockIdList
+     */
+    public ListenableFuture<Void> putBlockList(String container, String name, List<String> blockIdList) {
+        return async.putBlockList(container, name, blockIdList);
+    }
+
+    /**
+     * This implementation invokes {@link AzureBlobAsyncClient#getBlockList(String, String)}
+     * @param container
+     * @param name
+     */
+    public ListenableFuture<ListBlobBlocksResponse> getBlockList(String container, String name) {
+        return async.getBlockList(container, name);
+    }
 
    /**
     * This implementation invokes {@link AzureBlobAsyncClient#getBlobProperties}
