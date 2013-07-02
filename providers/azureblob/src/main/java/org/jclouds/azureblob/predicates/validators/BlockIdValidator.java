@@ -25,10 +25,12 @@ import java.net.URLDecoder;
 /**
  * Validates Block IDs used in Put Block:
  *
- * A valid Base64 string value that identifies the block. Prior to encoding, the string must
+ * "A valid Base64 string value that identifies the block. Prior to encoding, the string must
  * be less than or equal to 64 bytes in size. For a given blob, the length of the value
  * specified for the blockid parameter must be the same size for each block. Note that the
- * Base64 string must be URL-encoded.
+ * Base64 string must be URL-encoded."
+ *
+ * @see {http://msdn.microsoft.com/en-us/library/windowsazure/dd135726.aspx}
  */
 @Singleton
 public class BlockIdValidator extends Validator<String> {
