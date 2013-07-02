@@ -217,7 +217,7 @@ public interface AzureBlobClient {
      *  a single, large blob object with the Put Block List operation. Azure will search the
      *  latest blocks uploaded with putBlock to assemble the blob.
      */
-    String putBlockList(String container, String name, List<String> blockIdList);
+    void putBlockList(String container, String name, List<String> blockIdList);
 
     /**
      * Get Block ID List for a blob
