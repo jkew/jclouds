@@ -18,16 +18,12 @@ package org.jclouds.azureblob;
 
 import static com.google.common.net.HttpHeaders.EXPECT;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Named;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 
 import org.jclouds.Fallbacks.TrueOnNotFoundOr404;
 import org.jclouds.Fallbacks.VoidOnNotFoundOr404;
@@ -37,10 +33,8 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.azureblob.AzureBlobFallbacks.FalseIfContainerAlreadyExists;
 import org.jclouds.azureblob.binders.BindAzureBlobMetadataToRequest;
-import org.jclouds.azureblob.domain.BlobProperties;
-import org.jclouds.azureblob.domain.ContainerProperties;
-import org.jclouds.azureblob.domain.ListBlobsResponse;
-import org.jclouds.azureblob.domain.PublicAccess;
+import org.jclouds.azureblob.binders.BindAzureBlocksToRequest;
+import org.jclouds.azureblob.domain.*;
 import org.jclouds.azureblob.functions.BlobName;
 import org.jclouds.azureblob.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.azureblob.functions.ParseBlobPropertiesFromHeaders;
@@ -48,8 +42,10 @@ import org.jclouds.azureblob.functions.ParseContainerPropertiesFromHeaders;
 import org.jclouds.azureblob.functions.ParsePublicAccessHeader;
 import org.jclouds.azureblob.options.CreateContainerOptions;
 import org.jclouds.azureblob.options.ListBlobsOptions;
+import org.jclouds.azureblob.predicates.validators.BlockIdValidator;
 import org.jclouds.azureblob.predicates.validators.ContainerNameValidator;
 import org.jclouds.azureblob.xml.AccountNameEnumerationResultsHandler;
+import org.jclouds.azureblob.xml.BlobBlocksResultsHandler;
 import org.jclouds.azureblob.xml.ContainerNameEnumerationResultsHandler;
 import org.jclouds.blobstore.BlobStoreFallbacks.FalseOnContainerNotFound;
 import org.jclouds.blobstore.BlobStoreFallbacks.FalseOnKeyNotFound;
@@ -58,6 +54,7 @@ import org.jclouds.blobstore.BlobStoreFallbacks.NullOnKeyNotFound;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Fallback;
 import org.jclouds.rest.annotations.Headers;
@@ -283,5 +280,40 @@ public interface AzureBlobAsyncClient {
    ListenableFuture<Void> deleteBlob(
             @PathParam("container") @ParamValidators(ContainerNameValidator.class) String container,
             @PathParam("name") String name);
+
+
+    /**
+     * @see AzureBlobClient#putBlock
+     */
+    @Named("PutBlock")
+    @PUT
+    @Path("{container}/{name}")
+    @QueryParams(keys = { "comp" }, values = { "block" })
+    ListenableFuture<Void> putBlock(@PathParam("container") @ParamValidators(ContainerNameValidator.class) String container,
+                                    @PathParam("name") String name,
+                                    @QueryParam("blockid") @ParamValidators(BlockIdValidator.class) String blockId, Payload part);
+
+
+    /**
+     * @see AzureBlobClient#putBlockList
+     */
+    @Named("PutBlockList")
+    @PUT
+    @Path("{container}/{name}")
+    @QueryParams(keys = { "comp" }, values = { "blocklist" })
+    ListenableFuture<Void> putBlockList(@PathParam("container") @ParamValidators(ContainerNameValidator.class) String container,
+                                        @PathParam("name") String name,
+                                        @BinderParam(BindAzureBlocksToRequest.class) List<String> blockIdList);
+
+    /**
+     * @see AzureBlobClient#getBlockList
+     */
+    @Named("GetBlockList")
+    @GET
+    @Path("{container}/{name}")
+    @XMLResponseParser(BlobBlocksResultsHandler.class)
+    @QueryParams(keys = { "comp" }, values = { "blocklist" })
+    ListenableFuture<ListBlobBlocksResponse> getBlockList(@PathParam("container") @ParamValidators(ContainerNameValidator.class) String container,
+                                                          @PathParam("name") String name);
 
 }
