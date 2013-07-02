@@ -19,7 +19,9 @@ package org.jclouds.azureblob.domain;
 import java.util.List;
 
 /**
- * Typed response from Get Blob Block List
+ * Typed response from Get Blob Block List operation
+ *
+ * @author John V Kew II
  */
 public interface ListBlobBlocksResponse {
     List<BlobBlockProperties> getBlocks();
