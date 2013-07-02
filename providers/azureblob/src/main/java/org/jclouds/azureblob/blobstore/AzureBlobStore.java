@@ -19,6 +19,7 @@ package org.jclouds.azureblob.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -32,7 +33,9 @@ import org.jclouds.azureblob.blobstore.functions.BlobToAzureBlob;
 import org.jclouds.azureblob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azureblob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azureblob.blobstore.functions.ListOptionsToListBlobsOptions;
+import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.azureblob.domain.ContainerProperties;
+import org.jclouds.azureblob.domain.ListBlobBlocksResponse;
 import org.jclouds.azureblob.domain.PublicAccess;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -54,6 +57,7 @@ import org.jclouds.http.options.GetOptions;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import org.jclouds.io.Payload;
 
 /**
  * @author Adrian Cole
@@ -219,7 +223,32 @@ public class AzureBlobStore extends BaseBlobStore {
       sync.deleteBlob(container, key);
    }
 
-   /**
+    /**
+     *  The Put Block operation creates a block blob on Azure which can be later assembled into
+     *  a single, large blob object with the Put Block List operation.
+     */
+    public void putBlock(String container, String name, String blockId, Payload block) {
+        sync.putBlock(container, name, blockId, block);
+    }
+
+
+    /**
+     *  The Put Block operation creates a block blob on Azure which can be later assembled into
+     *  a single, large blob object with the Put Block List operation. Azure will search the
+     *  latest blocks uploaded with putBlock to assemble the blob.
+     */
+    public void putBlockList(String container, String name, List<String> blockIdList) {
+        sync.putBlockList(container, name, blockIdList);
+    }
+
+    /**
+     * Get Block ID List for a blob
+     */
+    public ListBlobBlocksResponse getBlockList(String container, String name) {
+        return sync.getBlockList(container, name);
+    }
+
+    /**
     * This implementation invokes {@link AzureBlobClient#getBlobProperties}
     * 
     * @param container
