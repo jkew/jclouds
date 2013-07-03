@@ -211,7 +211,7 @@ public interface AzureBlobClient {
      *
      *  @see <a href="http://msdn.microsoft.com/en-us/library/windowsazure/dd135726.aspx">Put Blob</a>
      */
-    String putBlock(String container, String name, String blockId, Payload object);
+    void putBlock(String container, String name, String blockId, Payload object);
 
 
     /**
@@ -221,7 +221,7 @@ public interface AzureBlobClient {
      *
      *  @see <a href="http://msdn.microsoft.com/en-us/library/windowsazure/dd179467.aspx">Put Block List</a>
      */
-    void putBlockList(String container, String name, List<String> blockIdList);
+    String putBlockList(String container, String name, List<String> blockIdList);
 
     /**
      * Get Block ID List for a blob

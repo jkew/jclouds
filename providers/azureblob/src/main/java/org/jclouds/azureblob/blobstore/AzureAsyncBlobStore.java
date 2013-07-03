@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -36,6 +37,7 @@ import org.jclouds.azureblob.blobstore.functions.BlobToAzureBlob;
 import org.jclouds.azureblob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azureblob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azureblob.blobstore.functions.ListOptionsToListBlobsOptions;
+import org.jclouds.azureblob.blobstore.strategy.MultipartUploadStrategy;
 import org.jclouds.azureblob.domain.*;
 import org.jclouds.azureblob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -77,8 +79,10 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToAzureBlob blob2AzureBlob;
    private final BlobPropertiesToBlobMetadata blob2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
+   private final Provider<MultipartUploadStrategy> multipartUploadStrategy;
 
-   @Inject
+
+    @Inject
    AzureAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AzureBlobAsyncClient async,
@@ -86,7 +90,8 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
             BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions) {
+            BlobToHttpGetOptions blob2ObjectGetOptions,
+            Provider<MultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, userExecutor, defaultLocation, locations);
       this.async = checkNotNull(async, "async");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
@@ -97,6 +102,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
       this.blob2AzureBlob = checkNotNull(blob2AzureBlob, "blob2AzureBlob");
       this.blob2BlobMd = checkNotNull(blob2BlobMd, "blob2BlobMd");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.multipartUploadStrategy = checkNotNull(multipartUploadStrategy, "multipartUploadStrategy");
    }
 
    /**
@@ -236,7 +242,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
      * @param name
      * @param blockIdList
      */
-    public ListenableFuture<Void> putBlockList(String container, String name, List<String> blockIdList) {
+    public ListenableFuture<String> putBlockList(String container, String name, List<String> blockIdList) {
         return async.putBlockList(container, name, blockIdList);
     }
 
@@ -273,7 +279,9 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Override
    public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options) {
-      // TODO implement options
+       if (options.isMultipart()) {
+           throw new UnsupportedOperationException("Multipart upload not supported in AzureAsyncBlobStore");
+       }
       return putBlob(container, blob);
    }
 

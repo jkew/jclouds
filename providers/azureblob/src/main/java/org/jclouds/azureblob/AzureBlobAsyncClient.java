@@ -300,8 +300,9 @@ public interface AzureBlobAsyncClient {
     @Named("PutBlockList")
     @PUT
     @Path("{container}/{name}")
+    @ResponseParser(ParseETagHeader.class)
     @QueryParams(keys = { "comp" }, values = { "blocklist" })
-    ListenableFuture<Void> putBlockList(@PathParam("container") @ParamValidators(ContainerNameValidator.class) String container,
+    ListenableFuture<String> putBlockList(@PathParam("container") @ParamValidators(ContainerNameValidator.class) String container,
                                         @PathParam("name") String name,
                                         @BinderParam(BindAzureBlocksToRequest.class) List<String> blockIdList);
 
