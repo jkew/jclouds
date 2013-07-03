@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jclouds.azureblob.blobstore.strategy;
 
 import com.google.common.hash.Hashing;
@@ -19,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -39,23 +56,34 @@ public class AzureBlobBlockUploadStrategy implements MultipartUploadStrategy {
     }
 
     @Override
-    public void execute(String container, Blob blob) {
+    public String execute(String container, Blob blob) {
         String blobName = blob.getMetadata().getName();
         Payload payload = blob.getPayload();
         Long length = payload.getContentMetadata().getContentLength();
         checkNotNull(length,
                 "please invoke payload.getContentMetadata().setContentLength(length) prior to azure block upload");
+        checkArgument(length <= (MAX_NUMBER_OF_BLOCKS * MAX_BLOCK_SIZE));
         Long offset = 0L;
         List<String> blockIds = new LinkedList<String>();
+        int blockCount = 0;
+        int totalBlocks = (int) Math.ceil(length / MAX_BLOCK_SIZE) + 1;
+        long bytesWritten = 0;
         while (offset < length) {
+            blockCount++;
+            long chunkSize = MAX_BLOCK_SIZE;
+            if (blockCount >= totalBlocks) {
+               chunkSize = length % MAX_BLOCK_SIZE;
+            }
+            bytesWritten += chunkSize;
+            Payload block = slicer.slice(payload, offset, chunkSize);
             offset += MultipartUploadStrategy.MAX_BLOCK_SIZE;
-            Payload block = slicer.slice(payload, offset, MultipartUploadStrategy.MAX_BLOCK_SIZE);
             String blockName = blobName + "-" + offset + "-" + new SecureRandom().nextInt();
             byte blockIdBytes[] = Hashing.md5().hashBytes(blockName.getBytes()).asBytes();
             String blockId = BaseEncoding.base64().encode(blockIdBytes);
             blockIds.add(blockId);
             client.putBlock(container, blobName, blockId, block);
         }
-        client.putBlockList(container, blobName, blockIds);
+        assert(bytesWritten == length);
+        return client.putBlockList(container, blobName, blockIds);
     }
 }
