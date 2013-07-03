@@ -18,7 +18,7 @@ package org.jclouds.azureblob.domain.internal;
 
 import org.jclouds.azureblob.domain.BlobBlockProperties;
 
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 /**
  * Representation of the blocks which compose a Blob
@@ -54,13 +54,13 @@ public class BlobBlockPropertiesImpl implements BlobBlockProperties {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       BlobBlockPropertiesImpl that = (BlobBlockPropertiesImpl) o;
-      return Objects.equals(blockName, that.blockName)
-            && Objects.equals(committed, that.committed)
-            && Objects.equals(contentLength, that.contentLength);
+      return Objects.equal(blockName, that.blockName)
+            && Objects.equal(committed, that.committed)
+            && Objects.equal(contentLength, that.contentLength);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(blockName, contentLength, committed);
+      return Objects.hashCode(blockName, contentLength, committed);
    }
 }

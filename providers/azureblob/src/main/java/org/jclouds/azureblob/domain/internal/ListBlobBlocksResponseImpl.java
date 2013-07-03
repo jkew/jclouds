@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 
 import java.util.List;
-import java.util.Objects;
+import com.google.common.base.Objects;
 
 /**
  * Represents the list of blocks which compose a blob
@@ -46,11 +46,11 @@ public class ListBlobBlocksResponseImpl implements ListBlobBlocksResponse {
       if (o == null || getClass() != o.getClass()) return false;
 
       ListBlobBlocksResponseImpl that = (ListBlobBlocksResponseImpl) o;
-      return Objects.equals(blocks, that.blocks);
+      return Objects.equal(blocks, that.blocks);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(blocks);
+      return Objects.hashCode(blocks);
    }
 }
