@@ -22,7 +22,7 @@ package org.jclouds.azureblob.domain;
  * @author John V Kew II
  */
 public interface BlobBlockProperties {
-    String getBlockName();
-    boolean isCommmitted();
-    long getContentLength();
+   String getBlockName();
+   boolean isCommitted();
+   long getContentLength();
 }

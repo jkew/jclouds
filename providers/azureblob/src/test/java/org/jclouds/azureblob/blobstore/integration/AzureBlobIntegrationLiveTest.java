@@ -74,25 +74,25 @@ public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
       assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
    }
 
-    /**
-     * Essentially copied from the AWS multipart chucked stream test
-     */
+   /**
+    * Essentially copied from the AWS multipart chucked stream test
+    */
    public void testMultipartChunkedFileStream() throws IOException, InterruptedException {
-        oneHundredOneConstitutions = getTestDataSupplier();
-        oneHundredOneConstitutionsMD5 = asByteSource(oneHundredOneConstitutions.getInput()).hash(md5()).asBytes();
-        File file = new File("target/const.txt");
-        Files.copy(oneHundredOneConstitutions, file);
-        String containerName = getContainerName();
+      oneHundredOneConstitutions = getTestDataSupplier();
+      oneHundredOneConstitutionsMD5 = asByteSource(oneHundredOneConstitutions.getInput()).hash(md5()).asBytes();
+      File file = new File("target/const.txt");
+      Files.copy(oneHundredOneConstitutions, file);
+      String containerName = getContainerName();
 
-        try {
-            BlobStore blobStore = view.getBlobStore();
-            blobStore.createContainerInLocation(null, containerName);
-            Blob blob = blobStore.blobBuilder("const.txt").payload(file).build();
-            String expected = blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
-            String etag = blobStore.blobMetadata(containerName, "const.txt").getETag();
-            assertEquals(etag, expected);
-        } finally {
-            returnContainer(containerName);
-        }
+      try {
+         BlobStore blobStore = view.getBlobStore();
+         blobStore.createContainerInLocation(null, containerName);
+         Blob blob = blobStore.blobBuilder("const.txt").payload(file).build();
+         String expected = blobStore.putBlob(containerName, blob, PutOptions.Builder.multipart());
+         String etag = blobStore.blobMetadata(containerName, "const.txt").getETag();
+         assertEquals(etag, expected);
+      } finally {
+         returnContainer(containerName);
+      }
    }
 }

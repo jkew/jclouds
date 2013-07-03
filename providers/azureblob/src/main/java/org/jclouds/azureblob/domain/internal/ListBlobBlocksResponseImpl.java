@@ -19,37 +19,38 @@ package org.jclouds.azureblob.domain.internal;
 import org.jclouds.azureblob.domain.BlobBlockProperties;
 import org.jclouds.azureblob.domain.ListBlobBlocksResponse;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents the list of blocks which compose a blob
  */
 public class ListBlobBlocksResponseImpl implements ListBlobBlocksResponse {
-    private final List<BlobBlockProperties> blocks;
+   private final List<BlobBlockProperties> blocks;
 
-    public ListBlobBlocksResponseImpl(List<BlobBlockProperties> blocks) {
-        this.blocks = blocks;
-    }
+   public ListBlobBlocksResponseImpl(List<BlobBlockProperties> blocks) {
+      this.blocks = checkNotNull(blocks, "bloc`k list must not be null");
+   }
 
-    @Override
-    public List<BlobBlockProperties> getBlocks() {
-        return blocks;
-    }
+   @Override
+   public List<BlobBlockProperties> getBlocks() {
+      return blocks;
+   }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
 
-        ListBlobBlocksResponseImpl that = (ListBlobBlocksResponseImpl) o;
+      ListBlobBlocksResponseImpl that = (ListBlobBlocksResponseImpl) o;
+      return Objects.equals(blocks, that.blocks);
+   }
 
-        if (blocks != null ? !blocks.equals(that.blocks) : that.blocks != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return blocks != null ? blocks.hashCode() : 0;
-    }
+   @Override
+   public int hashCode() {
+      return Objects.hash(blocks);
+   }
 }

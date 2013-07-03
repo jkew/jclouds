@@ -230,30 +230,30 @@ public class AzureBlobStore extends BaseBlobStore {
       sync.deleteBlob(container, key);
    }
 
-    /**
-     *  The Put Block operation creates a block blob on Azure which can be later assembled into
-     *  a single, large blob object with the Put Block List operation.
-     */
-    public void putBlock(String container, String name, String blockId, Payload block) {
-        sync.putBlock(container, name, blockId, block);
-    }
+   /**
+    *  The Put Block operation creates a block blob on Azure which can be later assembled into
+    *  a single, large blob object with the Put Block List operation.
+    */
+   public void putBlock(String container, String name, String blockId, Payload block) {
+      sync.putBlock(container, name, blockId, block);
+   }
 
 
-    /**
-     *  The Put Block operation creates a block blob on Azure which can be later assembled into
-     *  a single, large blob object with the Put Block List operation. Azure will search the
-     *  latest blocks uploaded with putBlock to assemble the blob.
-     */
-    public String putBlockList(String container, String name, List<String> blockIdList) {
-        return sync.putBlockList(container, name, blockIdList);
-    }
+   /**
+    *  The Put Block operation creates a block blob on Azure which can be later assembled into
+    *  a single, large blob object with the Put Block List operation. Azure will search the
+    *  latest blocks uploaded with putBlock to assemble the blob.
+    */
+   public String putBlockList(String container, String name, List<String> blockIdList) {
+      return sync.putBlockList(container, name, blockIdList);
+   }
 
-    /**
-     * Get Block ID List for a blob
-     */
-    public ListBlobBlocksResponse getBlockList(String container, String name) {
-        return sync.getBlockList(container, name);
-    }
+   /**
+    * Get Block ID List for a blob
+    */
+   public ListBlobBlocksResponse getBlockList(String container, String name) {
+      return sync.getBlockList(container, name);
+   }
 
     /**
     * This implementation invokes {@link AzureBlobClient#getBlobProperties}

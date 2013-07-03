@@ -35,25 +35,25 @@ import java.util.List;
 @Test(groups = "unit", testName = "BlobBlocksResultsHandlerTest")
 public class BlobBlocksResultsHandlerTest extends BaseHandlerTest {
 
-    @BeforeTest
-    @Override
-    protected void setUpInjector() {
-        super.setUpInjector();
-    }
+   @BeforeTest
+   @Override
+   protected void setUpInjector() {
+      super.setUpInjector();
+   }
 
-    public void testGetResult() throws Exception {
-        InputStream is = getClass().getResourceAsStream("/test_list_blob_blocks.xml");
+   public void testGetResult() throws Exception {
+      InputStream is = getClass().getResourceAsStream("/test_list_blob_blocks.xml");
 
-        List<BlobBlockProperties> blocks = new LinkedList<BlobBlockProperties>();
-        blocks.add(new BlobBlockPropertiesImpl("blockIdA", 1234, true));
-        blocks.add(new BlobBlockPropertiesImpl("blockIdB", 4321, true));
-        blocks.add(new BlobBlockPropertiesImpl("blockIdC", 5678, false));
-        blocks.add(new BlobBlockPropertiesImpl("blockIdD", 8765, false));
-        ListBlobBlocksResponse expected = new ListBlobBlocksResponseImpl(blocks);
+      List<BlobBlockProperties> blocks = new LinkedList<BlobBlockProperties>();
+      blocks.add(new BlobBlockPropertiesImpl("blockIdA", 1234, true));
+      blocks.add(new BlobBlockPropertiesImpl("blockIdB", 4321, true));
+      blocks.add(new BlobBlockPropertiesImpl("blockIdC", 5678, false));
+      blocks.add(new BlobBlockPropertiesImpl("blockIdD", 8765, false));
+      ListBlobBlocksResponse expected = new ListBlobBlocksResponseImpl(blocks);
 
-        ListBlobBlocksResponse result = factory.create(
-                injector.getInstance(BlobBlocksResultsHandler.class)).parse(is);
+      ListBlobBlocksResponse result = factory.create(
+            injector.getInstance(BlobBlocksResultsHandler.class)).parse(is);
 
-        assertEquals(expected, result);
-    }
+      assertEquals(expected, result);
+   }
 }

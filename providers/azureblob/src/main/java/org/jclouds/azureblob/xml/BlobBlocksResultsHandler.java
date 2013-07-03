@@ -41,57 +41,57 @@ import java.util.List;
  */
 public class BlobBlocksResultsHandler extends ParseSax.HandlerWithResult<ListBlobBlocksResponse> {
 
-    private StringBuilder currentText = new StringBuilder();
-    private boolean inCommitted = false;
-    private boolean inBlock = false;
-    private boolean inName = false;
-    private boolean inSize = false;
-    private String blockName;
-    private long size;
-    private List<BlobBlockProperties> blocks = new LinkedList<BlobBlockProperties>();
+   private StringBuilder currentText = new StringBuilder();
+   private boolean inCommitted = false;
+   private boolean inBlock = false;
+   private boolean inName = false;
+   private boolean inSize = false;
+   private String blockName;
+   private long size;
+   private List<BlobBlockProperties> blocks = new LinkedList<BlobBlockProperties>();
 
-    @Override
-    public ListBlobBlocksResponse getResult() {
-       return new ListBlobBlocksResponseImpl(blocks);
-    }
+   @Override
+   public ListBlobBlocksResponse getResult() {
+      return new ListBlobBlocksResponseImpl(blocks);
+   }
 
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
-        if ("CommittedBlocks".equals(qName)) {
-            inCommitted = true;
-        } else if ("UncommittedBlocks".equals(qName)) {
-            inCommitted = false;
-        } else if ("Block".equals(qName)) {
-            inBlock = true;
-        } else if ("Name".equals(qName)) {
-            inName = true;
-        } else if ("Size".equals(qName)) {
-            inSize = true;
-        }
-    }
+   @Override
+   public void startElement(String uri, String localName, String qName, Attributes attributes)
+         throws SAXException {
+      if ("CommittedBlocks".equals(qName)) {
+         inCommitted = true;
+      } else if ("UncommittedBlocks".equals(qName)) {
+         inCommitted = false;
+      } else if ("Block".equals(qName)) {
+         inBlock = true;
+      } else if ("Name".equals(qName)) {
+         inName = true;
+      } else if ("Size".equals(qName)) {
+         inSize = true;
+      }
+   }
 
-    public void endElement(String uri, String name, String qName) {
-        if ("CommittedBlocks".equals(qName)) {
-            inCommitted = false;
-        } else if ("UncommittedBlocks".equals(qName)) {
-            inCommitted = false;
-        } else if ("Block".equals(qName)) {
-            BlobBlockProperties block = new BlobBlockPropertiesImpl(blockName, size, inCommitted);
-            blocks.add(block);
-            inBlock = false;
-        } else if ("Name".equals(qName)) {
-            blockName = currentText.toString().trim();
-            inName = false;
-        } else if ("Size".equals(qName)) {
-            size = Long.parseLong(currentText.toString().trim());
-            inSize = false;
-        }
-        currentText = new StringBuilder();
-    }
+   public void endElement(String uri, String name, String qName) {
+      if ("CommittedBlocks".equals(qName)) {
+         inCommitted = false;
+      } else if ("UncommittedBlocks".equals(qName)) {
+         inCommitted = false;
+      } else if ("Block".equals(qName)) {
+         BlobBlockProperties block = new BlobBlockPropertiesImpl(blockName, size, inCommitted);
+         blocks.add(block);
+         inBlock = false;
+      } else if ("Name".equals(qName)) {
+         blockName = currentText.toString().trim();
+         inName = false;
+      } else if ("Size".equals(qName)) {
+         size = Long.parseLong(currentText.toString().trim());
+         inSize = false;
+      }
+      currentText = new StringBuilder();
+   }
 
-    public void characters(char ch[], int start, int length) {
-        currentText.append(ch, start, length);
-    }
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+   }
 
 }

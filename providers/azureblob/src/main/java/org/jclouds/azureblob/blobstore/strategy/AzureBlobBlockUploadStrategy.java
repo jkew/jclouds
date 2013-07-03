@@ -16,6 +16,7 @@
  */
 package org.jclouds.azureblob.blobstore.strategy;
 
+import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.inject.Inject;
@@ -29,11 +30,8 @@ import org.jclouds.logging.Logger;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -42,48 +40,48 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Decomposes a blob into blocks for upload and assembly through PutBlock and PutBlockList
  */
 public class AzureBlobBlockUploadStrategy implements MultipartUploadStrategy {
-    @Resource
-    @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
-    private Logger logger = Logger.NULL;
+   @Resource
+   @Named(BlobStoreConstants.BLOBSTORE_LOGGER)
+   private Logger logger = Logger.NULL;
 
-    private final AzureBlobClient client;
-    private final PayloadSlicer slicer;
+   private final AzureBlobClient client;
+   private final PayloadSlicer slicer;
 
-    @Inject
-    public AzureBlobBlockUploadStrategy(AzureBlobClient client, PayloadSlicer slicer) {
-        this.client = checkNotNull(client, "client");
-        this.slicer = checkNotNull(slicer, "slicer");
-    }
+   @Inject
+   public AzureBlobBlockUploadStrategy(AzureBlobClient client, PayloadSlicer slicer) {
+      this.client = checkNotNull(client, "client");
+      this.slicer = checkNotNull(slicer, "slicer");
+   }
 
-    @Override
-    public String execute(String container, Blob blob) {
-        String blobName = blob.getMetadata().getName();
-        Payload payload = blob.getPayload();
-        Long length = payload.getContentMetadata().getContentLength();
-        checkNotNull(length,
-                "please invoke payload.getContentMetadata().setContentLength(length) prior to azure block upload");
-        checkArgument(length <= (MAX_NUMBER_OF_BLOCKS * MAX_BLOCK_SIZE));
-        Long offset = 0L;
-        List<String> blockIds = new LinkedList<String>();
-        int blockCount = 0;
-        int totalBlocks = (int) Math.ceil(length / MAX_BLOCK_SIZE) + 1;
-        long bytesWritten = 0;
-        while (offset < length) {
-            blockCount++;
-            long chunkSize = MAX_BLOCK_SIZE;
-            if (blockCount >= totalBlocks) {
-               chunkSize = length % MAX_BLOCK_SIZE;
-            }
-            bytesWritten += chunkSize;
-            Payload block = slicer.slice(payload, offset, chunkSize);
-            offset += MultipartUploadStrategy.MAX_BLOCK_SIZE;
-            String blockName = blobName + "-" + offset + "-" + new SecureRandom().nextInt();
-            byte blockIdBytes[] = Hashing.md5().hashBytes(blockName.getBytes()).asBytes();
-            String blockId = BaseEncoding.base64().encode(blockIdBytes);
-            blockIds.add(blockId);
-            client.putBlock(container, blobName, blockId, block);
-        }
-        assert(bytesWritten == length);
-        return client.putBlockList(container, blobName, blockIds);
-    }
+   @Override
+   public String execute(String container, Blob blob) {
+      String blobName = blob.getMetadata().getName();
+      Payload payload = blob.getPayload();
+      Long length = payload.getContentMetadata().getContentLength();
+      checkNotNull(length,
+            "please invoke payload.getContentMetadata().setContentLength(length) prior to azure block upload");
+      checkArgument(length <= (MAX_NUMBER_OF_BLOCKS * MAX_BLOCK_SIZE));
+      Long offset = 0L;
+      List<String> blockIds = Lists.newArrayList();
+      int blockCount = 0;
+      int totalBlocks = (int) Math.ceil(length / MAX_BLOCK_SIZE) + 1;
+      long bytesWritten = 0;
+      while (offset < length) {
+         blockCount++;
+         long chunkSize = MAX_BLOCK_SIZE;
+         if (blockCount >= totalBlocks) {
+            chunkSize = length % MAX_BLOCK_SIZE;
+         }
+         bytesWritten += chunkSize;
+         Payload block = slicer.slice(payload, offset, chunkSize);
+         offset += MultipartUploadStrategy.MAX_BLOCK_SIZE;
+         String blockName = blobName + "-" + offset + "-" + new SecureRandom().nextInt();
+         byte blockIdBytes[] = Hashing.md5().hashBytes(blockName.getBytes()).asBytes();
+         String blockId = BaseEncoding.base64().encode(blockIdBytes);
+         blockIds.add(blockId);
+         client.putBlock(container, blobName, blockId, block);
+      }
+      assert(bytesWritten == length);
+      return client.putBlockList(container, blobName, blockIds);
+   }
 }

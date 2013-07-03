@@ -82,7 +82,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    private final Provider<MultipartUploadStrategy> multipartUploadStrategy;
 
 
-    @Inject
+   @Inject
    AzureAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ListeningExecutorService userExecutor, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AzureBlobAsyncClient async,
@@ -224,36 +224,36 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
       return async.blobExists(container, name);
    }
 
-    /**
-     * This implementation invokes {@link AzureBlobAsyncClient#putBlock(String, String, String, Payload)}
-     * @param container
-     * @param name
-     * @param blockId
-     * @param object
-     */
-    public ListenableFuture<Void> putBlock(String container, String name, String blockId, Payload object) {
-        return async.putBlock(container, name, blockId, object);
-    }
+   /**
+    * This implementation invokes {@link AzureBlobAsyncClient#putBlock(String, String, String, Payload)}
+    * @param container
+    * @param name
+    * @param blockId
+    * @param object
+    */
+   public ListenableFuture<Void> putBlock(String container, String name, String blockId, Payload object) {
+      return async.putBlock(container, name, blockId, object);
+   }
 
 
-    /**
-     * This implementation invokes {@link AzureBlobAsyncClient#putBlockList(String, String, java.util.List)}
-     * @param container
-     * @param name
-     * @param blockIdList
-     */
-    public ListenableFuture<String> putBlockList(String container, String name, List<String> blockIdList) {
-        return async.putBlockList(container, name, blockIdList);
-    }
+   /**
+    * This implementation invokes {@link AzureBlobAsyncClient#putBlockList(String, String, java.util.List)}
+    * @param container
+    * @param name
+    * @param blockIdList
+    */
+   public ListenableFuture<String> putBlockList(String container, String name, List<String> blockIdList) {
+      return async.putBlockList(container, name, blockIdList);
+   }
 
-    /**
-     * This implementation invokes {@link AzureBlobAsyncClient#getBlockList(String, String)}
-     * @param container
-     * @param name
-     */
-    public ListenableFuture<ListBlobBlocksResponse> getBlockList(String container, String name) {
-        return async.getBlockList(container, name);
-    }
+   /**
+    * This implementation invokes {@link AzureBlobAsyncClient#getBlockList(String, String)}
+    * @param container
+    * @param name
+    */
+   public ListenableFuture<ListBlobBlocksResponse> getBlockList(String container, String name) {
+      return async.getBlockList(container, name);
+   }
 
    /**
     * This implementation invokes {@link AzureBlobAsyncClient#getBlobProperties}

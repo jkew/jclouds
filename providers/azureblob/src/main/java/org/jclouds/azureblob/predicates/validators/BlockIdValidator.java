@@ -34,10 +34,10 @@ import java.net.URLDecoder;
  */
 @Singleton
 public class BlockIdValidator extends Validator<String> {
-    @Override
-    public void validate(@Nullable String s) throws IllegalArgumentException {
-        if (s.length() > 64)
-            throw new IllegalArgumentException("block id:" + s + "; Block Ids must be less than or equal to 64 bytes in size");
+   @Override
+   public void validate(@Nullable String s) throws IllegalArgumentException {
+      if (s.length() > 64)
+         throw new IllegalArgumentException("block id:" + s + "; Block Ids must be less than or equal to 64 bytes in size");
 
-    }
+   }
 }

@@ -37,33 +37,33 @@ import static org.easymock.EasyMock.*;
 @Test(groups = "unit", testName = "AzureBlobBlockUploadStrategyTest")
 public class AzureBlobBlockUploadStrategyTest {
 
-    public void testExecute() throws Exception {
-        String container = "test-container";
-        String blobName = "test-blob";
-        long oneMB = 1048576L;
-        AzureBlobClient client = createMock(AzureBlobClient.class);
-        PayloadSlicer slicer = createMock(PayloadSlicer.class);
-        MutableBlobMetadata metadata = new MutableBlobMetadataImpl();
-        MutableContentMetadata contentMetadata = new BaseMutableContentMetadata();
-        contentMetadata.setContentLength(MultipartUploadStrategy.MAX_BLOCK_SIZE * 3 + oneMB);
-        metadata.setName(blobName);
-        metadata.setContentMetadata(contentMetadata);
-        Blob blob = new BlobImpl(metadata);
-        Payload payload = new StringPayload("ABCD");
-        payload.setContentMetadata(contentMetadata);
-        blob.setPayload(payload);
+   public void testExecute() throws Exception {
+      String container = "test-container";
+      String blobName = "test-blob";
+      long oneMB = 1048576L;
+      AzureBlobClient client = createMock(AzureBlobClient.class);
+      PayloadSlicer slicer = createMock(PayloadSlicer.class);
+      MutableBlobMetadata metadata = new MutableBlobMetadataImpl();
+      MutableContentMetadata contentMetadata = new BaseMutableContentMetadata();
+      contentMetadata.setContentLength(MultipartUploadStrategy.MAX_BLOCK_SIZE * 3 + oneMB);
+      metadata.setName(blobName);
+      metadata.setContentMetadata(contentMetadata);
+      Blob blob = new BlobImpl(metadata);
+      Payload payload = new StringPayload("ABCD");
+      payload.setContentMetadata(contentMetadata);
+      blob.setPayload(payload);
 
-        expect(slicer.slice(payload, 0, MultipartUploadStrategy.MAX_BLOCK_SIZE)).andReturn(payload);
-        expect(slicer.slice(payload, MultipartUploadStrategy.MAX_BLOCK_SIZE, MultipartUploadStrategy.MAX_BLOCK_SIZE)).andReturn(payload);
-        expect(slicer.slice(payload, MultipartUploadStrategy.MAX_BLOCK_SIZE * 2, MultipartUploadStrategy.MAX_BLOCK_SIZE)).andReturn(payload);
-        expect(slicer.slice(payload, MultipartUploadStrategy.MAX_BLOCK_SIZE * 3, oneMB)).andReturn(payload);
-        client.putBlock(eq(container), eq(blobName), anyObject(String.class), eq(payload));
-        expectLastCall().times(4);
-        expect(client.putBlockList(eq(container), eq(blobName), anyObject(List.class))).andReturn("Fake ETAG");
+      expect(slicer.slice(payload, 0, MultipartUploadStrategy.MAX_BLOCK_SIZE)).andReturn(payload);
+      expect(slicer.slice(payload, MultipartUploadStrategy.MAX_BLOCK_SIZE, MultipartUploadStrategy.MAX_BLOCK_SIZE)).andReturn(payload);
+      expect(slicer.slice(payload, MultipartUploadStrategy.MAX_BLOCK_SIZE * 2, MultipartUploadStrategy.MAX_BLOCK_SIZE)).andReturn(payload);
+      expect(slicer.slice(payload, MultipartUploadStrategy.MAX_BLOCK_SIZE * 3, oneMB)).andReturn(payload);
+      client.putBlock(eq(container), eq(blobName), anyObject(String.class), eq(payload));
+      expectLastCall().times(4);
+      expect(client.putBlockList(eq(container), eq(blobName), anyObject(List.class))).andReturn("Fake ETAG");
 
-        AzureBlobBlockUploadStrategy strat = new AzureBlobBlockUploadStrategy(client, slicer);
-        replay(slicer,client);
-        String etag = strat.execute(container, blob);
-        assertEquals(etag, "Fake ETAG");
-    }
+      AzureBlobBlockUploadStrategy strat = new AzureBlobBlockUploadStrategy(client, slicer);
+      replay(slicer,client);
+      String etag = strat.execute(container, blob);
+      assertEquals(etag, "Fake ETAG");
+   }
 }

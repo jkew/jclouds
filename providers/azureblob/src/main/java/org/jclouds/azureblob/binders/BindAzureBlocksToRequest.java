@@ -33,16 +33,16 @@ import java.util.List;
  * </BlockList>
  */
 public class BindAzureBlocksToRequest implements Binder {
-    @Override
-    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-        List<String> blockIds = (List<String>)input;
-        StringBuilder latestIds = new StringBuilder();
-        for (String id : blockIds) {
-            latestIds.append("<Latest>").append(id).append("</Latest>");
-        }
-        final String content = String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<BlockList>%s</BlockList>", latestIds);
-        request.setPayload(content);
-        return request;
-    }
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      List<String> blockIds = (List<String>)input;
+      StringBuilder latestIds = new StringBuilder();
+      for (String id : blockIds) {
+         latestIds.append("<Latest>").append(id).append("</Latest>");
+      }
+      final String content = String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<BlockList>%s</BlockList>", latestIds);
+      request.setPayload(content);
+      return request;
+   }
 }
