@@ -22,7 +22,7 @@
   <parent>
     <artifactId>jclouds-project</artifactId>
     <groupId>org.apache.jclouds</groupId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.2-socrata</version>
     <relativePath>../project/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.jclouds.provider</groupId>
@@ -30,49 +30,6 @@
   <packaging>pom</packaging>
   <name>jclouds providers project</name>
   <modules>
-    <module>gogrid</module>
-    <module>cloudsigma-zrh</module>
-    <module>cloudsigma-lvs</module>
     <module>azureblob</module>
-    <module>aws-s3</module>
-    <module>aws-ec2</module>
-    <module>aws-sqs</module>
-    <module>aws-cloudwatch</module>
-    <module>ninefold-storage</module>
-    <module>cloudonestorage</module>
-    <module>bluelock-vcloud-zone01</module>
-    <module>trmk-ecloud</module>
-    <module>trmk-vcloudexpress</module>
-    <module>elastichosts-lon-p</module>
-    <module>elastichosts-sat-p</module>
-    <module>elastichosts-lon-b</module>
-    <module>elastichosts-tor-p</module>
-    <module>elastichosts-lax-p</module>
-    <module>openhosting-east1</module>
-    <module>serverlove-z1-man</module>
-    <module>skalicloud-sdg-my</module>
-    <module>greenhousedata-element-vcloud</module>
-    <module>go2cloud-jhb1</module>
-    <module>softlayer</module>
-    <module>ninefold-compute</module>
-    <module>hpcloud-compute</module>
-    <module>hpcloud-objectstorage</module>
-    <module>cloudservers-us</module>
-    <module>cloudservers-uk</module>
-    <module>cloudfiles-us</module>
-    <module>cloudfiles-uk</module>
-    <module>rackspace-clouddns-us</module>
-    <module>rackspace-clouddns-uk</module>
-    <module>rackspace-cloudloadbalancers-us</module>
-    <module>rackspace-cloudloadbalancers-uk</module>
-    <module>rackspace-cloudservers-us</module>
-    <module>rackspace-cloudservers-uk</module>
-    <module>rackspace-cloudblockstorage-us</module>
-    <module>rackspace-cloudblockstorage-uk</module>
-    <module>glesys</module>
-    <module>aws-sts</module>
-    <module>aws-route53</module>
-    <module>ultradns-ws</module>
-    <module>dynect</module>
   </modules>
 </project>

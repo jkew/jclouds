@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.2-socrata</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.jclouds.provider</groupId>
@@ -44,35 +44,35 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.jclouds.common</groupId>
+      <groupId>org.jclouds.common</groupId>
       <artifactId>azure-common</artifactId>
-      <version>${project.version}</version>
+      <version>1.6.0</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.apache.jclouds</groupId>
+      <groupId>org.jclouds</groupId>
       <artifactId>jclouds-blobstore</artifactId>
-      <version>${project.version}</version>
+      <version>1.6.0</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>org.apache.jclouds</groupId>
+      <groupId>org.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
-      <version>${project.version}</version>
+      <version>1.6.0</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.jclouds</groupId>
+      <groupId>org.jclouds</groupId>
       <artifactId>jclouds-blobstore</artifactId>
-      <version>${project.version}</version>
+      <version>1.6.0</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.jclouds.driver</groupId>
+      <groupId>org.jclouds.driver</groupId>
       <artifactId>jclouds-log4j</artifactId>
-      <version>${project.version}</version>
+      <version>1.6.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
